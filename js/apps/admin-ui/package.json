@@ -80,7 +80,7 @@
     "@patternfly/react-styles": "^5.4.1",
     "@patternfly/react-table": "^5.4.9",
     "admin-ui": "file:",
-    "axios": "^1.7.7",
+    "axios": "^1.7.9",
     "dagre": "^0.8.5",
     "file-saver": "^2.0.5",
     "flat": "^6.0.1",
