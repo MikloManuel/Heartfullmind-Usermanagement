@@ -34,7 +34,7 @@ export default function MappingDetails() {
   const { t } = useTranslation();
   const { addAlert, addError } = useAlerts();
 
-  const { id, mapperId, viewMode } = useParams<MapperParams>();
+  const { id, mapperId } = useParams<MapperParams>();
   const form = useForm();
   const { setValue, handleSubmit } = form;
   const [mapping, setMapping] = useState<ProtocolMapperTypeRepresentation>();
@@ -46,7 +46,8 @@ export default function MappingDetails() {
   const navigate = useNavigate();
   const { realm } = useRealm();
   const serverInfo = useServerInfo();
-  const isUpdating = viewMode === "edit";
+  const isGuid = /^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$/;
+  const isUpdating = !!isGuid.exec(mapperId);
 
   const isOnClientScope = !!useMatch(MapperRoute.path);
   const toDetails = () =>

@@ -79,10 +79,6 @@ export class WhoAmI {
   public isTemporary(): boolean {
     return this.#me?.temporary ?? false;
   }
-
-  public isEmpty(): boolean {
-    return !this.#me;
-  }
 }
 
 type WhoAmIProps = {

@@ -1,5 +1,6 @@
 import type EventRepresentation from "@keycloak/keycloak-admin-client/lib/defs/eventRepresentation";
 import type EventType from "@keycloak/keycloak-admin-client/lib/defs/eventTypes";
+import type { RealmEventsConfigRepresentation } from "@keycloak/keycloak-admin-client/lib/defs/realmEventsConfigRepresentation";
 import {
   KeycloakDataTable,
   KeycloakSelect,
@@ -38,7 +39,6 @@ import DropdownPanel from "../components/dropdown-panel/DropdownPanel";
 import { useRealm } from "../context/realm-context/RealmContext";
 import { toUser } from "../user/routes/User";
 import useFormatDate, { FORMAT_DATE_AND_TIME } from "../utils/useFormatDate";
-import useLocaleSort from "../utils/useLocaleSort";
 
 import "./events.css";
 
@@ -120,16 +120,18 @@ export const UserEvents = ({ user, client }: UserEventsProps) => {
   const { adminClient } = useAdminClient();
 
   const { t } = useTranslation();
-  const localeSort = useLocaleSort();
   const { realm } = useRealm();
   const formatDate = useFormatDate();
   const [key, setKey] = useState(0);
   const [searchDropdownOpen, setSearchDropdownOpen] = useState(false);
   const [selectOpen, setSelectOpen] = useState(false);
-  const [events, setEvents] = useState<string[]>();
+  const [events, setEvents] = useState<RealmEventsConfigRepresentation>();
   const [activeFilters, setActiveFilters] = useState<
     Partial<UserEventSearchForm>
-  >({});
+  >({
+    ...(user && { user }),
+    ...(client && { client }),
+  });
 
   const defaultValues: UserEventSearchForm = {
     client: client ? client : "",
@@ -164,15 +166,12 @@ export const UserEvents = ({ user, client }: UserEventsProps) => {
 
   useFetch(
     () => adminClient.realms.getConfigEvents({ realm }),
-    (events) =>
-      setEvents(localeSort(events?.enabledEventTypes || [], (e) => e)),
+    (events) => setEvents(events),
     [],
   );
 
   function loader(first?: number, max?: number) {
     return adminClient.realms.findEvents({
-      client,
-      user,
       // The admin client wants 'dateFrom' and 'dateTo' to be Date objects, however it cannot actually handle them so we need to cast to any.
       ...(activeFilters as any),
       realm,
@@ -219,14 +218,6 @@ export const UserEvents = ({ user, client }: UserEventsProps) => {
       (value) => value !== "" || (Array.isArray(value) && value.length > 0),
     );
 
-    if (user) {
-      delete newFilters.user;
-    }
-
-    if (client) {
-      delete newFilters.client;
-    }
-
     setActiveFilters(newFilters);
     setKey(key + 1);
   }
@@ -240,7 +231,7 @@ export const UserEvents = ({ user, client }: UserEventsProps) => {
         >
           <FlexItem>
             <DropdownPanel
-              buttonText={t("searchUserEventsBtn")}
+              buttonText={t("searchForUserEvent")}
               setSearchDropdownOpen={setSearchDropdownOpen}
               searchDropdownOpen={searchDropdownOpen}
               marginRight="2.5rem"
@@ -252,13 +243,12 @@ export const UserEvents = ({ user, client }: UserEventsProps) => {
                 onSubmit={handleSubmit(onSubmit)}
                 isHorizontal
               >
-                {!user && (
-                  <TextControl
-                    name="user"
-                    label={t("userId")}
-                    data-testid="userId-searchField"
-                  />
-                )}
+                <TextControl
+                  name="user"
+                  label={t("userId")}
+                  data-testid="userId-searchField"
+                  isDisabled={!!user}
+                />
                 <FormGroup
                   label={t("eventType")}
                   fieldId="kc-eventType"
@@ -311,7 +301,7 @@ export const UserEvents = ({ user, client }: UserEventsProps) => {
                           </ChipGroup>
                         }
                       >
-                        {events?.map((option) => (
+                        {events?.enabledEventTypes?.map((option) => (
                           <SelectOption key={option} value={option}>
                             {t(`eventTypes.${option}.name`)}
                           </SelectOption>
@@ -320,13 +310,12 @@ export const UserEvents = ({ user, client }: UserEventsProps) => {
                     )}
                   />
                 </FormGroup>
-                {!client && (
-                  <TextControl
-                    name="client"
-                    label={t("client")}
-                    data-testid="client-searchField"
-                  />
-                )}
+                <TextControl
+                  name="client"
+                  label={t("client")}
+                  data-testid="client-searchField"
+                  isDisabled={!!client}
+                />
                 <FormGroup
                   label={t("dateFrom")}
                   fieldId="kc-dateFrom"
@@ -397,13 +386,17 @@ export const UserEvents = ({ user, client }: UserEventsProps) => {
                     string | EventType[],
                   ];
 
+                  const disableClose =
+                    (key === "user" && !!user) ||
+                    (key === "client" && !!client);
+
                   return (
                     <ChipGroup
                       className="pf-v5-u-mt-md pf-v5-u-mr-md"
                       key={key}
                       categoryName={filterLabels[key]}
+                      isClosable={!disableClose}
                       onClick={() => removeFilter(key)}
-                      isClosable
                     >
                       {typeof value === "string" ? (
                         <Chip isReadOnly>{value}</Chip>
@@ -450,14 +443,11 @@ export const UserEvents = ({ user, client }: UserEventsProps) => {
             cellRenderer: (row) =>
               formatDate(new Date(row.time!), FORMAT_DATE_AND_TIME),
           },
-          ...(!user
-            ? [
-                {
-                  name: "userId",
-                  cellRenderer: UserDetailLink,
-                },
-              ]
-            : []),
+          {
+            name: "userId",
+            displayKey: "user",
+            cellRenderer: UserDetailLink,
+          },
           {
             name: "type",
             displayKey: "eventType",
@@ -468,14 +458,10 @@ export const UserEvents = ({ user, client }: UserEventsProps) => {
             displayKey: "ipAddress",
             transforms: [cellWidth(10)],
           },
-          ...(!client
-            ? [
-                {
-                  name: "clientId",
-                  displayKey: "client",
-                },
-              ]
-            : []),
+          {
+            name: "clientId",
+            displayKey: "client",
+          },
         ]}
         emptyState={
           <ListEmptyState

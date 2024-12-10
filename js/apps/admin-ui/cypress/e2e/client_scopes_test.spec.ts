@@ -430,7 +430,7 @@ describe("Client Scopes test", () => {
       cy.injectAxe();
     });
 
-    const scopeName = "a11y_" + uuid();
+    const scopeName = "a11y";
 
     after(async () => {
       await adminClient.deleteClientScope(scopeName);

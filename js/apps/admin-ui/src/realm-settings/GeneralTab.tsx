@@ -110,9 +110,6 @@ function RealmSettingsGeneralTabForm({
   } = form;
   const isFeatureEnabled = useIsFeatureEnabled();
   const isOrganizationsEnabled = isFeatureEnabled(Feature.Organizations);
-  const isAdminPermissionsV2Enabled = isFeatureEnabled(
-    Feature.AdminFineGrainedAuthzV2,
-  );
   const isOpenid4vciEnabled = isFeatureEnabled(Feature.OpenId4VCI);
 
   const setupForm = () => {
@@ -230,20 +227,6 @@ function RealmSettingsGeneralTabForm({
               labelIcon={t("organizationsEnabledHelp")}
             />
           )}
-          {isAdminPermissionsV2Enabled && (
-            <DefaultSwitchControl
-              name="adminPermissionsEnabled"
-              label={t("adminPermissionsEnabled")}
-              labelIcon={t("adminPermissionsEnabledHelp")}
-            />
-          )}
-          {isOpenid4vciEnabled && (
-            <DefaultSwitchControl
-              name="verifiableCredentialsEnabled"
-              label={t("verifiableCredentialsEnabled")}
-              labelIcon={t("verifiableCredentialsEnabledHelp")}
-            />
-          )}
           <SelectControl
             name="unmanagedAttributePolicy"
             label={t("unmanagedAttributes")}
@@ -283,7 +266,7 @@ function RealmSettingsGeneralTabForm({
                   title={t("samlIdentityProviderMetadata")}
                 />
               </StackItem>
-              {isOpenid4vciEnabled && realm.verifiableCredentialsEnabled && (
+              {isOpenid4vciEnabled && (
                 <StackItem>
                   <FormattedLink
                     href={`${addTrailingSlash(

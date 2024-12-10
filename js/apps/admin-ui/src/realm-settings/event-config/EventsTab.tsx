@@ -111,6 +111,7 @@ export const EventsTab = ({ realm }: EventsTabProps) => {
         },
       );
     }
+    refreshRealm();
 
     try {
       await adminClient.realms.updateConfigEvents(
@@ -132,8 +133,6 @@ export const EventsTab = ({ realm }: EventsTabProps) => {
         error,
       );
     }
-
-    refreshRealm();
   };
 
   const addEventTypes = async (eventTypes: EventType[]) => {

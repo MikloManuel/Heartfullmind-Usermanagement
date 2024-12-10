@@ -113,11 +113,11 @@ export default class GroupPage extends PageObject {
     return this;
   }
 
-  duplicateGroupItem(groupName: string) {
-    cy.intercept("/admin/realms/master/groups/*").as("fetchGroup");
+  duplicateGroupItem(groupName: string, confirmModal = true) {
     listingPage.duplicateItem(groupName);
-    cy.wait("@fetchGroup");
-    groupModal.confirmDuplicateModal();
+    if (confirmModal) {
+      groupModal.confirmDuplicateModal();
+    }
     return this;
   }
 
@@ -201,12 +201,11 @@ export default class GroupPage extends PageObject {
     return this;
   }
 
-  assertNotificationCouldNotCreateGroupWithDuplicatedName(
-    groupName: string,
-    errorMessage: string,
-  ) {
+  assertNotificationCouldNotCreateGroupWithDuplicatedName(groupName: string) {
     masthead.checkNotificationMessage(
-      errorMessage + groupName + "' already exists.",
+      "Could not create group Top level group named '" +
+        groupName +
+        "' already exists.",
     );
     return this;
   }

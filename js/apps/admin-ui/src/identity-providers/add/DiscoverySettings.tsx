@@ -92,9 +92,9 @@ const Fields = ({ readOnly }: DiscoverySettingsProps) => {
             />
           ) : (
             <>
-              <TextAreaControl
+              <TextControl
                 name="config.publicKeySignatureVerifier"
-                label={t("validatingPublicKey")}
+                label="validatingPublicKey"
               />
               <TextControl
                 name="config.publicKeySignatureVerifierKeyId"

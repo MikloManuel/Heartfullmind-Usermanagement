@@ -1,4 +1,4 @@
-import { Path, generatePath } from "react-router-dom";
+import { generatePath, Path } from "react-router-dom";
 import type { AppRouteObject } from "../routes";
 import { lazy } from "react";
 

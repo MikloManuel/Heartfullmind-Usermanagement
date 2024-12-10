@@ -240,7 +240,7 @@
         <!-- Frontend -->
         <node.version>v20.18.0</node.version>
         <pnpm.version>9.12.2</pnpm.version>
-        <pnpm.args.install>install --prefer-offline --frozen-lockfile --ignore-scripts</pnpm.args.install>
+        <pnpm.args.install>install --prefer-offline --no-frozen-lockfile --ignore-scripts</pnpm.args.install>
         <!-- The clean step is skipped on Windows -->
         <js.skip.clean>false</js.skip.clean>
 
@@ -265,13 +265,6 @@
         <url>https://github.com/keycloak/keycloak/tree/master/</url>
     </scm>
 
-    <distributionManagement>
-        <repository>
-            <id>${jboss.releases.repo.id}</id>
-            <name>JBoss Releases Repository</name>
-            <url>${jboss.releases.repo.url}</url>
-        </repository>
-    </distributionManagement>
 
     <issueManagement>
         <system>JIRA</system>
@@ -293,7 +286,7 @@
         <module>core</module>
         <module>crypto</module>
         <module>dependencies</module>
-        <module>docs</module>
+        <!-- <module>docs</module> -->
         <module>server-spi</module>
         <module>server-spi-private</module>
         <module>saml-core-api</module>
@@ -313,8 +306,18 @@
         <module>quarkus</module>
     </modules>
 
-    <dependencyManagement>
+    <distributionManagement>
+        <repository>
+            <id>local-https-repository</id>
+            <url>https://localhost/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>local-https-repository</id>
+            <url>https://localhost/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
+    <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.infinispan</groupId>

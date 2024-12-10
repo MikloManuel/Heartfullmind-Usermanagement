@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet author="manuel" id="user-relationships-1">
+        <validCheckSum>9:6a6e13ff52e5da628e07a16c0c5807d3</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="RELATIONSHIPS"/>
+            </not>
+        </preConditions>
+        <createTable tableName="RELATIONSHIPS">
+            <column name="ID" type="VARCHAR(36)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="USER_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RELATED_USER_ID" type="VARCHAR(36)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RELATIONSHIP_TYPE" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RELATIONSHIP_STATUS" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATED_AT" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addForeignKeyConstraint baseColumnNames="USER_ID"
+                                baseTableName="RELATIONSHIPS"
+                                constraintName="FK_USER_RELATIONSHIP"
+                                referencedColumnNames="ID"
+                                referencedTableName="USER_ENTITY"/>
+                                
+        <addForeignKeyConstraint baseColumnNames="RELATED_USER_ID"
+                                baseTableName="RELATIONSHIPS"
+                                constraintName="FK_RELATED_USER"
+                                referencedColumnNames="ID"
+                                referencedTableName="USER_ENTITY"/>
+    </changeSet>
+</databaseChangeLog>

@@ -13,7 +13,9 @@ export type UserTab =
   | "credentials"
   | "role-mapping"
   | "identity-provider-links"
-  | "user-events";
+  | "user-events"
+  | "relationships"
+  | "friends-requests";
 
 export type UserParams = {
   realm: string;

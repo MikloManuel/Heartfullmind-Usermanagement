@@ -20,7 +20,7 @@ import {
 } from "@patternfly/react-core";
 import { InfoCircleIcon } from "@patternfly/react-icons";
 import { TFunction } from "i18next";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -48,6 +48,7 @@ import { UserIdentityProviderLinks } from "./UserIdentityProviderLinks";
 import { UserRoleMapping } from "./UserRoleMapping";
 import { UserSessions } from "./UserSessions";
 import { UserEvents } from "../events/UserEvents";
+import { Path } from "react-router-dom";
 import {
   UIUserRepresentation,
   UserFormFields,
@@ -58,12 +59,14 @@ import {
 import { UserParams, UserTab, toUser } from "./routes/User";
 import { toUsers } from "./routes/Users";
 import { isLightweightUser } from "./utils";
-
+import RelationshipTab from "./relations/view/Relations";
+import { FriendsRequestsTab } from "./friendsrequests/view/FriendsRequests";
 import "./user-section.css";
+import UserRepresentation from "js/libs/keycloak-admin-client/lib/defs/userRepresentation";
+import { FriendsRequestsRepresentation } from "./friendsrequests/data/FriendsRequestsRepresentation";
 
 export default function EditUser() {
   const { adminClient } = useAdminClient();
-
   const { t } = useTranslation();
   const { addAlert, addError } = useAlerts();
   const navigate = useNavigate();
@@ -79,7 +82,8 @@ export default function EditUser() {
     mode: "onChange",
     resolver: clearAllErrorsBeforeSubmit,
   });
-  const [user, setUser] = useState<UIUserRepresentation>();
+  const [user, setUser] = useState<UserRepresentation>();
+  const [users, setUsers] = useState<UserRepresentation[]>();
   const [bruteForced, setBruteForced] = useState<BruteForced>();
   const [isUnmanagedAttributesEnabled, setUnmanagedAttributesEnabled] =
     useState<boolean>();
@@ -89,12 +93,12 @@ export default function EditUser() {
   const refresh = () => setRefreshCount((count) => count + 1);
   const lightweightUser = isLightweightUser(user?.id);
   const [upConfig, setUpConfig] = useState<UserProfileConfig>();
-
+  const [pendingRequests, setPendingRequests] =
+    useState<FriendsRequestsRepresentation[]>();
   const [realmHasOrganizations, setRealmHasOrganizations] = useState(false);
   const isFeatureEnabled = useIsFeatureEnabled();
   const showOrganizations =
     isFeatureEnabled(Feature.Organizations) && realm?.organizationsEnabled;
-
   const toTab = (tab: UserTab) =>
     toUser({
       realm: realmName,
@@ -102,18 +106,40 @@ export default function EditUser() {
       tab,
     });
 
-  const settingsTab = useRoutableTab(toTab("settings"));
-  const attributesTab = useRoutableTab(toTab("attributes"));
-  const credentialsTab = useRoutableTab(toTab("credentials"));
-  const roleMappingTab = useRoutableTab(toTab("role-mapping"));
-  const groupsTab = useRoutableTab(toTab("groups"));
-  const organizationsTab = useRoutableTab(toTab("organizations"));
-  const consentsTab = useRoutableTab(toTab("consents"));
-  const identityProviderLinksTab = useRoutableTab(
-    toTab("identity-provider-links"),
+  const tabs = useMemo(
+    () => ({
+      settingsTab: useRoutableTab(toTab("settings")),
+      attributesTab: useRoutableTab(toTab("attributes")),
+      credentialsTab: useRoutableTab(toTab("credentials")),
+      roleMappingTab: useRoutableTab(toTab("role-mapping")),
+      groupsTab: useRoutableTab(toTab("groups")),
+      organizationsTab: useRoutableTab(toTab("organizations")),
+      consentsTab: useRoutableTab(toTab("consents")),
+      identityProviderLinksTab: useRoutableTab(
+        toTab("identity-provider-links"),
+      ),
+      sessionsTab: useRoutableTab(toTab("sessions")),
+      userEventsTab: useRoutableTab(toTab("user-events")),
+      relationshipTab: useRoutableTab(toTab("relationships")),
+      friendsRequestsTab: useRoutableTab(toTab("friends-requests")),
+    }),
+    [toTab, useRoutableTab],
   );
-  const sessionsTab = useRoutableTab(toTab("sessions"));
-  const userEventsTab = useRoutableTab(toTab("user-events"));
+
+  const {
+    settingsTab,
+    attributesTab,
+    credentialsTab,
+    roleMappingTab,
+    groupsTab,
+    organizationsTab,
+    consentsTab,
+    identityProviderLinksTab,
+    sessionsTab,
+    userEventsTab,
+    relationshipTab,
+    friendsRequestsTab,
+  } = tabs;
 
   useFetch(
     async () =>
@@ -128,6 +154,8 @@ export default function EditUser() {
         showOrganizations
           ? adminClient.organizations.find({ first: 0, max: 1 })
           : [],
+
+        adminClient.users.find(),
       ]),
     ([
       userData,
@@ -135,6 +163,7 @@ export default function EditUser() {
       unmanagedAttributes,
       upConfig,
       organizations,
+      users,
     ]) => {
       if (!userData || !realm || !attackDetection) {
         throw new Error(t("notFound"));
@@ -152,8 +181,9 @@ export default function EditUser() {
         setUnmanagedAttributesEnabled(true);
       }
 
-      setUser(user);
+      setUser(userData);
       setUpConfig(upConfig);
+      setPendingRequests(pendingRequests);
 
       const isBruteForceProtected = realm.bruteForceProtected;
       const isLocked = isBruteForceProtected && attackDetection.disabled;
@@ -162,6 +192,7 @@ export default function EditUser() {
       setRealmHasOrganizations(organizations.length === 1);
 
       form.reset(toUserFormFields(user));
+      setUsers(users.filter((user: UserRepresentation) => user.id !== id));
     },
     [refreshCount],
   );
@@ -400,7 +431,7 @@ export default function EditUser() {
                   title={<TabTitleText>{t("organizations")}</TabTitleText>}
                   {...organizationsTab}
                 >
-                  <Organizations user={user} />
+                  <Organizations />
                 </Tab>
               )}
               <Tab
@@ -426,15 +457,29 @@ export default function EditUser() {
               >
                 <UserSessions />
               </Tab>
-              {hasAccess("view-events") && realm?.eventsEnabled && (
+              {hasAccess("view-events") && (
                 <Tab
                   data-testid="user-events-tab"
-                  title={<TabTitleText>{t("events")}</TabTitleText>}
+                  title={<TabTitleText>{t("userEvents")}</TabTitleText>}
                   {...userEventsTab}
                 >
                   <UserEvents user={user.id} />
                 </Tab>
               )}
+              <Tab
+                data-testid="relationship-tab"
+                title={<TabTitleText>{t("relations")}</TabTitleText>}
+                {...relationshipTab}
+              >
+                <RelationshipTab user={user} users={users!} />
+              </Tab>
+              <Tab
+                data-testid="friendsrequests-tab"
+                title={<TabTitleText>{t("friendsrequests")}</TabTitleText>}
+                {...friendsRequestsTab}
+              >
+                <FriendsRequestsTab currentUser={user} users={users!} />
+              </Tab>
             </RoutableTabs>
           </FormProvider>
         </UserProfileProvider>

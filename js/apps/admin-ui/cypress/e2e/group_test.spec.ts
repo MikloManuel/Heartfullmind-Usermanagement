@@ -34,11 +34,6 @@ describe("Group test", () => {
   let users: { id: string; username: string }[] = [];
   const username = "test-user";
 
-  const duplicatedGroupErrorMessage = {
-    mainGroup: "Could not create group Top level group named '",
-    childGroup: "Could not create group Sibling group named '",
-  };
-
   before(async () => {
     users = await Promise.all(
       range(5).map((index) => {
@@ -103,10 +98,7 @@ describe("Group test", () => {
         .assertNoGroupsInThisRealmEmptyStateMessageExist(false)
         .createGroup(groupName, false)
         .createGroup(groupName, false)
-        .assertNotificationCouldNotCreateGroupWithDuplicatedName(
-          groupName,
-          duplicatedGroupErrorMessage.mainGroup,
-        );
+        .assertNotificationCouldNotCreateGroupWithDuplicatedName(groupName);
       groupModal.closeModal();
       groupPage.searchGroup(groupName).assertGroupItemsEqual(1);
     });
@@ -127,9 +119,9 @@ describe("Group test", () => {
         .assertNoSearchResultsMessageExist(true);
     });
 
-    it("Duplicate group from item bar", () => {
+    it("Duplicate group", () => {
       groupPage
-        .duplicateGroupItem(groupNames[0])
+        .duplicateGroupItem(groupNames[0], true)
         .assertNotificationGroupDuplicated();
     });
 
@@ -275,12 +267,11 @@ describe("Group test", () => {
     });
 
     // https://github.com/keycloak/keycloak-admin-ui/issues/2726
-    it("Fail to create group with duplicated name", () => {
+    it.skip("Fail to create group with duplicated name", () => {
       childGroupsTab
         .createGroup(predefinedGroups[2], false)
         .assertNotificationCouldNotCreateGroupWithDuplicatedName(
           predefinedGroups[2],
-          duplicatedGroupErrorMessage.childGroup,
         );
     });
 

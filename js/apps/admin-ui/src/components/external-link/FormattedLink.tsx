@@ -16,10 +16,6 @@ export const FormattedLink = ({
       href={href}
       target="_blank"
       rel="noreferrer noopener"
-      style={{
-        textDecoration: "underline",
-        textDecorationColor: "transparent",
-      }}
       className={isInline ? "pf-m-link pf-m-inline" : ""}
       {...rest}
     >

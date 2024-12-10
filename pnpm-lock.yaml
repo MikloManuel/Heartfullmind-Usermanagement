@@ -160,7 +160,7 @@ importers:
         specifier: ^5.4.1
         version: 5.4.1
       '@patternfly/react-code-editor':
-        specifier: ^5.4.13
+        specifier: ^5.4.11
         version: 5.4.13(monaco-editor@0.52.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@patternfly/react-core':
         specifier: ^5.4.10
@@ -172,11 +172,14 @@ importers:
         specifier: ^5.4.1
         version: 5.4.1
       '@patternfly/react-table':
-        specifier: ^5.4.11
+        specifier: ^5.4.9
         version: 5.4.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       admin-ui:
         specifier: 'file:'
-        version: '@keycloak/keycloak-admin-ui@file:js/apps/admin-ui(@types/react@18.3.12)(typescript@5.6.3)'
+        version: '@keycloak/keycloak-admin-ui@file:js/apps/admin-ui(@types/react@18.3.12)'
+      axios:
+        specifier: ^1.7.7
+        version: 1.7.8
       dagre:
         specifier: ^0.8.5
         version: 0.8.5
@@ -187,11 +190,11 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
       i18next:
-        specifier: ^24.0.2
-        version: 24.0.2(typescript@5.6.3)
+        specifier: ^23.16.4
+        version: 23.16.8
       i18next-http-backend:
-        specifier: ^3.0.1
-        version: 3.0.1
+        specifier: ^2.6.2
+        version: 2.7.1
       keycloak-js:
         specifier: workspace:*
         version: link:../../libs/keycloak-js
@@ -211,13 +214,13 @@ importers:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
       react-hook-form:
-        specifier: ^7.53.2
+        specifier: ^7.53.1
         version: 7.53.2(react@18.3.1)
       react-i18next:
-        specifier: ^15.1.2
-        version: 15.1.2(i18next@24.0.2(typescript@5.6.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^15.1.0
+        version: 15.1.2(i18next@23.16.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-router-dom:
-        specifier: ^6.28.0
+        specifier: ^6.27.0
         version: 6.28.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       reactflow:
         specifier: ^11.11.4
@@ -236,7 +239,7 @@ importers:
         specifier: ^10.4.0
         version: 10.4.0
       '@testing-library/jest-dom':
-        specifier: ^6.6.3
+        specifier: ^6.6.2
         version: 6.6.3
       '@testing-library/react':
         specifier: ^16.0.1
@@ -260,16 +263,16 @@ importers:
         specifier: ^10.0.0
         version: 10.0.0
       '@vitejs/plugin-react-swc':
-        specifier: ^3.7.2
+        specifier: ^3.7.1
         version: 3.7.2(vite@5.4.11(@types/node@22.10.0)(lightningcss@1.28.2)(terser@5.36.0))
       cypress:
-        specifier: ^13.16.0
+        specifier: ^13.15.1
         version: 13.16.0
       cypress-axe:
         specifier: ^1.5.0
         version: 1.5.0(axe-core@4.10.1)(cypress@13.16.0)
       cypress-split:
-        specifier: ^1.24.6
+        specifier: ^1.24.5
         version: 1.24.6(@babel/core@7.25.8)
       jsdom:
         specifier: ^25.0.1
@@ -278,16 +281,16 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
       lightningcss:
-        specifier: ^1.28.2
+        specifier: ^1.27.0
         version: 1.28.2
       ts-node:
         specifier: ^10.9.2
         version: 10.9.2(@swc/core@1.7.36)(@types/node@22.10.0)(typescript@5.6.3)
       uuid:
-        specifier: ^11.0.3
+        specifier: ^11.0.2
         version: 11.0.3
       vite:
-        specifier: ^5.4.11
+        specifier: ^5.4.10
         version: 5.4.11(@types/node@22.10.0)(lightningcss@1.28.2)(terser@5.36.0)
       vite-plugin-checker:
         specifier: ^0.8.0
@@ -296,7 +299,7 @@ importers:
         specifier: ^4.3.0
         version: 4.3.0(@types/node@22.10.0)(rollup@4.27.4)(typescript@5.6.3)(vite@5.4.11(@types/node@22.10.0)(lightningcss@1.28.2)(terser@5.36.0))
       vitest:
-        specifier: ^2.1.6
+        specifier: ^2.1.4
         version: 2.1.6(@types/node@22.10.0)(jsdom@25.0.1)(lightningcss@1.28.2)(terser@5.36.0)
 
   js/apps/create-keycloak-theme:
@@ -2160,6 +2163,9 @@ packages:
     resolution: {integrity: sha512-qPC9o+kD8Tir0lzNGLeghbOrWMr3ZJpaRlCIb6Uobt/7N4FiEDvqUMnxzCHRHmg8vOg14kr5gVNyScRmbMaJ9g==}
     engines: {node: '>=4'}
 
+  axios@1.7.8:
+    resolution: {integrity: sha512-Uu0wb7KNqK2t5K+YQyVCLM76prD5sRFjKHbJYCP1J7JFGEQ6nN7HWn9+04LAeiJ3ji54lgS/gZCH1oxyrf1SPw==}
+
   b4a@1.6.7:
     resolution: {integrity: sha512-OnAYlL5b7LEkALw87fUVafQw5rVR9RjwGd4KUwNQ6DrrNmaVaUCgLipfVlzrPQ4tWOR9P0IXGNOx50jYCCdSJg==}
 
@@ -3017,6 +3023,15 @@ packages:
   focus-trap@7.6.2:
     resolution: {integrity: sha512-9FhUxK1hVju2+AiQIDJ5Dd//9R2n2RAfJ0qfhF4IHGHgcoEUTMpbTeG/zbEuwaiYXfuAH6XE0/aCyxDdRM+W5w==}
 
+  follow-redirects@1.15.9:
+    resolution: {integrity: sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+
   font-awesome@4.7.0:
     resolution: {integrity: sha512-U6kGnykA/6bFmg1M/oT9EkFeIYv7JlX3bozwQJWiiLz6L0w3F5vBVPxHlwyX/vtNq1ckcpRKOB9f2Qal/VtFpg==}
     engines: {node: '>=0.10.3'}
@@ -3251,8 +3266,14 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  i18next-http-backend@2.7.1:
+    resolution: {integrity: sha512-vPksHIckysGgykCD8JwCr2YsJEml9Cyw+Yu2wtb4fQ7xIn9RH/hkUDh5UkwnIzb0kSL4SJ30Ab/sCInhQxbCgg==}
+
   i18next-http-backend@3.0.1:
     resolution: {integrity: sha512-XT2lYSkbAtDE55c6m7CtKxxrsfuRQO3rUfHzj8ZyRtY9CkIX3aRGwXGTkUhpGWce+J8n7sfu3J0f2wTzo7Lw0A==}
+
+  i18next@23.16.8:
+    resolution: {integrity: sha512-06r/TitrM88Mg5FdUXAKL96dJMzgqLE5dv3ryBAra4KCwD9mJ4ndOTS95ZuymIGoE+2hzfdaMak2X11/es7ZWg==}
 
   i18next@24.0.2:
     resolution: {integrity: sha512-D88xyIGcWAKwBTAs4RSqASi8NXR/NhCVSTM4LDbdoU8qb/5dcEZjNCLDhtQBB7Epw/Cp1w2vH/3ujoTbqLSs5g==}
@@ -4095,6 +4116,9 @@ packages:
 
   proxy-from-env@1.0.0:
     resolution: {integrity: sha512-F2JHgJQ1iqwnHDcQjVBsq3n/uoaFL+iPW/eAeL7kVxy/2RrWaN4WroKjjvbsoRtv0ftelNyC01bjRhn/bhcf4A==}
+
+  proxy-from-env@1.1.0:
+    resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
   pump@2.0.1:
     resolution: {integrity: sha512-ruPMNRkN3MHP1cWJc9OWr+T/xDP0jhXYCLfJcBuX54hhfIBnaQmAUMfDcG4DM5UMWByBbJY69QSphm3jtDKIkA==}
@@ -5668,7 +5692,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@keycloak/keycloak-admin-ui@file:js/apps/admin-ui(@types/react@18.3.12)(typescript@5.6.3)':
+  '@keycloak/keycloak-admin-ui@file:js/apps/admin-ui(@types/react@18.3.12)':
     dependencies:
       '@keycloak/keycloak-admin-client': link:js/libs/keycloak-admin-client
       '@keycloak/keycloak-ui-shared': link:js/libs/ui-shared
@@ -5678,11 +5702,12 @@ snapshots:
       '@patternfly/react-icons': 5.4.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@patternfly/react-styles': 5.4.1
       '@patternfly/react-table': 5.4.11(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      axios: 1.7.8
       dagre: 0.8.5
       file-saver: 2.0.5
       flat: 6.0.1
-      i18next: 24.0.2(typescript@5.6.3)
-      i18next-http-backend: 3.0.1
+      i18next: 23.16.8
+      i18next-http-backend: 2.7.1
       keycloak-js: link:js/libs/keycloak-js
       lodash-es: 4.17.21
       monaco-editor: 0.52.0
@@ -5690,16 +5715,16 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-hook-form: 7.53.2(react@18.3.1)
-      react-i18next: 15.1.2(i18next@24.0.2(typescript@5.6.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      react-i18next: 15.1.2(i18next@23.16.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-router-dom: 6.28.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       reactflow: 11.11.4(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       use-react-router-breadcrumbs: 4.0.1(react-router-dom@6.28.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
     transitivePeerDependencies:
       - '@types/react'
+      - debug
       - encoding
       - immer
       - react-native
-      - typescript
 
   '@kwsites/file-exists@1.1.1':
     dependencies:
@@ -6845,6 +6870,14 @@ snapshots:
 
   axe-core@4.10.1: {}
 
+  axios@1.7.8:
+    dependencies:
+      follow-redirects: 1.15.9
+      form-data: 4.0.1
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+
   b4a@1.6.7: {}
 
   backoff@2.5.0:
@@ -7933,6 +7966,8 @@ snapshots:
     dependencies:
       tabbable: 6.2.0
 
+  follow-redirects@1.15.9: {}
+
   font-awesome@4.7.0: {}
 
   for-each@0.3.3:
@@ -8174,11 +8209,21 @@ snapshots:
 
   husky@9.1.7: {}
 
+  i18next-http-backend@2.7.1:
+    dependencies:
+      cross-fetch: 4.0.0
+    transitivePeerDependencies:
+      - encoding
+
   i18next-http-backend@3.0.1:
     dependencies:
       cross-fetch: 4.0.0
     transitivePeerDependencies:
       - encoding
+
+  i18next@23.16.8:
+    dependencies:
+      '@babel/runtime': 7.25.7
 
   i18next@24.0.2(typescript@5.6.3):
     dependencies:
@@ -8987,6 +9032,8 @@ snapshots:
 
   proxy-from-env@1.0.0: {}
 
+  proxy-from-env@1.1.0: {}
+
   pump@2.0.1:
     dependencies:
       end-of-stream: 1.4.4
@@ -9046,6 +9093,15 @@ snapshots:
   react-hook-form@7.53.2(react@18.3.1):
     dependencies:
       react: 18.3.1
+
+  react-i18next@15.1.2(i18next@23.16.8)(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      '@babel/runtime': 7.25.7
+      html-parse-stringify: 3.0.1
+      i18next: 23.16.8
+      react: 18.3.1
+    optionalDependencies:
+      react-dom: 18.3.1(react@18.3.1)
 
   react-i18next@15.1.2(i18next@24.0.2(typescript@5.6.3))(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:

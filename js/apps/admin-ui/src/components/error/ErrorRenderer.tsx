@@ -29,14 +29,9 @@ export const ErrorRenderer = ({ error }: FallbackProps) => {
           <AlertActionCloseButton title={error.message} onClose={reset} />
         }
         actionLinks={
-          <>
-            <AlertActionLink onClick={() => showBoundary()}>
-              {t("retry")}
-            </AlertActionLink>
-            <AlertActionLink onClick={() => (location.href = "/")}>
-              {t("home")}
-            </AlertActionLink>
-          </>
+          <AlertActionLink onClick={() => showBoundary()}>
+            {t("retry")}
+          </AlertActionLink>
         }
       ></Alert>
     </PageSection>
