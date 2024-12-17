@@ -1,4 +1,4 @@
-import { ChipGroupProps, SelectProps } from "@patternfly/react-core";
+import { SelectProps } from "@patternfly/react-core";
 import { SingleSelect } from "./SingleSelect";
 import { TypeaheadSelect } from "./TypeaheadSelect";
 
@@ -33,7 +33,7 @@ export type KeycloakSelectProps<> = Omit<
   selections?: string | string[] | number | number[];
   validated?: "success" | "warning" | "error" | "default";
   typeAheadAriaLabel?: string;
-  chipGroupProps?: Omit<ChipGroupProps, "children" | "ref">;
+  chipGroupProps?: Record<string, any>;
   chipGroupComponent?: React.ReactNode;
   footer?: React.ReactNode;
 };

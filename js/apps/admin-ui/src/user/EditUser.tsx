@@ -20,7 +20,7 @@ import {
 } from "@patternfly/react-core";
 import { InfoCircleIcon } from "@patternfly/react-icons";
 import { TFunction } from "i18next";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -48,7 +48,7 @@ import { UserIdentityProviderLinks } from "./UserIdentityProviderLinks";
 import { UserRoleMapping } from "./UserRoleMapping";
 import { UserSessions } from "./UserSessions";
 import { UserEvents } from "../events/UserEvents";
-import { Path } from "react-router-dom";
+
 import {
   UIUserRepresentation,
   UserFormFields,
@@ -106,40 +106,20 @@ export default function EditUser() {
       tab,
     });
 
-  const tabs = useMemo(
-    () => ({
-      settingsTab: useRoutableTab(toTab("settings")),
-      attributesTab: useRoutableTab(toTab("attributes")),
-      credentialsTab: useRoutableTab(toTab("credentials")),
-      roleMappingTab: useRoutableTab(toTab("role-mapping")),
-      groupsTab: useRoutableTab(toTab("groups")),
-      organizationsTab: useRoutableTab(toTab("organizations")),
-      consentsTab: useRoutableTab(toTab("consents")),
-      identityProviderLinksTab: useRoutableTab(
-        toTab("identity-provider-links"),
-      ),
-      sessionsTab: useRoutableTab(toTab("sessions")),
-      userEventsTab: useRoutableTab(toTab("user-events")),
-      relationshipTab: useRoutableTab(toTab("relationships")),
-      friendsRequestsTab: useRoutableTab(toTab("friends-requests")),
-    }),
-    [toTab, useRoutableTab],
+  const settingsTab = useRoutableTab(toTab("settings"));
+  const attributesTab = useRoutableTab(toTab("attributes"));
+  const credentialsTab = useRoutableTab(toTab("credentials"));
+  const roleMappingTab = useRoutableTab(toTab("role-mapping"));
+  const groupsTab = useRoutableTab(toTab("groups"));
+  const organizationsTab = useRoutableTab(toTab("organizations"));
+  const consentsTab = useRoutableTab(toTab("consents"));
+  const identityProviderLinksTab = useRoutableTab(
+    toTab("identity-provider-links"),
   );
-
-  const {
-    settingsTab,
-    attributesTab,
-    credentialsTab,
-    roleMappingTab,
-    groupsTab,
-    organizationsTab,
-    consentsTab,
-    identityProviderLinksTab,
-    sessionsTab,
-    userEventsTab,
-    relationshipTab,
-    friendsRequestsTab,
-  } = tabs;
+  const sessionsTab = useRoutableTab(toTab("sessions"));
+  const userEventsTab = useRoutableTab(toTab("user-events"));
+  const relationshipTab = useRoutableTab(toTab("relationships"));
+  const friendsRequestsTab = useRoutableTab(toTab("friends-requests"));
 
   useFetch(
     async () =>

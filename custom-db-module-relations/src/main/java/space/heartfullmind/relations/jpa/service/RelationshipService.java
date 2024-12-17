@@ -15,94 +15,83 @@ import java.util.stream.Collectors;
 public class RelationshipService {
 
     protected EntityManager em;
-
-    private KeycloakSession session;
+    final private KeycloakSession session;
 
     public RelationshipService(KeycloakSession session) {
-        this.em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
         this.session = session;
     }
 
     public void createRelationship(String userId, String relatedUserId, RelationshipType type, RelationshipStatus status) {
-        EntityManager em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
-        KeycloakTransaction transaction = session.getTransactionManager();
+        this.em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
+        // Create first direction
+        RelationshipEntity entity1 = new RelationshipEntity();
+        entity1.setUserId(userId);
+        entity1.setRelatedUserId(relatedUserId);
+        entity1.setRelationshipType(type);
+        entity1.setRelationshipStatus(status);
+        this.em.persist(entity1);
 
-        if (!transaction.isActive()) {
-            transaction.begin();
-        }
-
-        try {
-            RelationshipEntity entity = new RelationshipEntity();
-            entity.setUserId(userId);
-            entity.setRelatedUserId(relatedUserId);
-            entity.setRelationshipType(type);
-            entity.setRelationshipStatus(status);
-            em.persist(entity);
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            throw e;
-        }
+        // Create reverse direction
+        RelationshipEntity entity2 = new RelationshipEntity();
+        entity2.setUserId(relatedUserId);
+        entity2.setRelatedUserId(userId);
+        entity2.setRelationshipType(type);
+        entity2.setRelationshipStatus(status);
+        this.em.persist(entity2);
     }
 
-
-
-
     public void updateRelationship(String userId, String relatedUserId, RelationshipType newType, RelationshipStatus status) {
+        this.em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
         RelationshipEntity entity = findRelationship(userId, relatedUserId);
         entity.setRelationshipType(newType);
         entity.setRelationshipStatus(status);
-        em.merge(entity);
+        this.em.merge(entity);
     }
 
+
+
+
     public void deleteRelationship(String userId, String relatedUserId) {
-        EntityManager em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
-        KeycloakTransaction transaction = session.getTransactionManager();
-
-        if (!transaction.isActive()) {
-            transaction.begin();
-        }
-
-        try {
-            RelationshipEntity entity = findRelationship(userId, relatedUserId);
-            em.remove(entity);
-            transaction.commit();
-        } catch (Exception e) {
-            transaction.rollback();
-            throw e;
-        }
-
+        this.em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
+        RelationshipEntity entity = findRelationship(userId, relatedUserId);
+        this.em.remove(entity);
     }
 
     public List<RelationshipDTO> getRelationships(String userId) {
-        EntityManager em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
-        return em.createQuery("SELECT r FROM RelationshipEntity r WHERE r.userId = :userId", RelationshipEntity.class)
+        this.em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
+        return this.em.createQuery(
+                        "SELECT r FROM RelationshipEntity r WHERE " +
+                                "r.userId = :userId OR r.relatedUserId = :userId",
+                        RelationshipEntity.class)
                 .setParameter("userId", userId)
                 .getResultList()
                 .stream()
-                .map(entity -> RelationshipDTO.from(entity))
-                .collect(Collectors.toList());
+                .map(RelationshipDTO::from)
+                .toList();
     }
 
-
     private RelationshipEntity findRelationship(String userId, String relatedUserId) {
-        EntityManager em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
-        KeycloakTransaction transaction = session.getTransactionManager();
-
-        if (!transaction.isActive()) {
-            transaction.begin();
-        }
-
-        try {
-            return em.createQuery(
+        this.em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
+        return this.em.createQuery(
                         "SELECT r FROM RelationshipEntity r WHERE r.userId = :userId AND r.relatedUserId = :relatedUserId",
                         RelationshipEntity.class)
                 .setParameter("userId", userId)
                 .setParameter("relatedUserId", relatedUserId)
                 .getSingleResult();
-        } catch (Exception e) {
-            transaction.rollback();
-            throw e;
-        }
+    }
+
+    public boolean hasExistingRelationship(String userId, String relatedUserId) {
+        this.em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
+        return this.em.createQuery(
+                            "SELECT r FROM RelationshipEntity r WHERE " +
+                                    "(r.userId = :userId AND r.relatedUserId = :relatedUserId) OR " +
+                                    "(r.userId = :relatedUserId AND r.relatedUserId = :userId) " +
+                                    "AND r.relationshipStatus = :status",
+                            RelationshipEntity.class)
+                    .setParameter("userId", userId)
+                    .setParameter("relatedUserId", relatedUserId)
+                    .setParameter("status", RelationshipStatus.ACCEPTED)
+                    .getResultList()
+                    .isEmpty();
     }
 }

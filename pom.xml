@@ -247,6 +247,8 @@
         <!-- Set to true on release to update proto.lock files -->
         <commitProtoLockChanges>false</commitProtoLockChanges>
         <skipProtoLock>false</skipProtoLock>
+
+        <maven.build.cache.enabled>false</maven.build.cache.enabled>
     </properties>
 
     <url>http://keycloak.org</url>
@@ -304,15 +306,16 @@
         <module>test-framework</module>
         <module>tests</module>
         <module>quarkus</module>
+        <module>custom-db-module-relations</module>
     </modules>
 
     <distributionManagement>
         <repository>
-            <id>local-https-repository</id>
+            <id>local-repository</id>
             <url>https://localhost/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
-            <id>local-https-repository</id>
+            <id>local-repository</id>
             <url>https://localhost/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>

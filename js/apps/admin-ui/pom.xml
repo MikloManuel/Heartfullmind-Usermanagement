@@ -132,6 +132,18 @@
         </resources>
         <plugins>
             <plugin>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-maven-plugin</artifactId>
+                <version>${quarkus.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
                 <executions>
@@ -143,6 +155,36 @@
                         </goals>
                         <configuration>
                             <arguments>pack --pack-destination=target</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-jar</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <copy file="${maven.multiModuleProjectDirectory}/custom-db-module-relations/target/keycloak-custom-db-${project.version}.jar"
+                                      todir="${maven.multiModuleProjectDirectory}/quarkus/server/target/providers/"
+                                      verbose="true"
+                                      force="true"
+                                      overwrite="true"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>build-keycloak</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <exec executable="${java.home}/bin/java" failonerror="true">
+                                    <arg line="-jar ${maven.multiModuleProjectDirectory}/quarkus/server/target/lib/quarkus-run.jar build -Dkc.home.dir=${maven.multiModuleProjectDirectory} -Dkc.db=postgres -Dmaven.test.skip=true --verbose"/>
+                                </exec>
+                            </target>
                         </configuration>
                     </execution>
                 </executions>

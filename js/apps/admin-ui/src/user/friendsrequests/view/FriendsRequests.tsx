@@ -30,8 +30,10 @@ export const FriendsRequestsTab = ({
 }) => {
   const { t } = useTranslation();
   const { addAlert, addError } = useAlerts();
-  const { realmRepresentation: realm } = useRealm();
-  const serverUrl = realm?.attributes?.["serverUrl"] || window.location.origin;
+  // @ts-ignore
+  const { realmRepresentation } = useRealm();
+  const serverUrl =
+    realmRepresentation?.attributes?.["serverUrl"] || window.location.origin;
   const [selectedUsers, setSelectedUsers] = useState<UserRepresentation[]>([]);
   const friendsRequestsService = new FriendsRequestsService(serverUrl);
   const relationshipService = new RelationshipService(serverUrl);
@@ -39,86 +41,147 @@ export const FriendsRequestsTab = ({
     FriendsRequestsRepresentation[]
   >([]);
   const [sentRequests, setSentRequests] = useState<Set<string>>(new Set());
+  const [checkedUsers, setCheckedUsers] = useState<Set<UserRepresentation>>(
+    new Set(),
+  );
+
+  useEffect(() => {
+    console.log("Component rendered with new styles!");
+  }, []);
+
+  useEffect(() => {
+    const newCheckedUsers = pendingRequests
+      .map((request) => {
+        const userId =
+          request.userId === currentUser.id
+            ? request.relatedUserId
+            : request.userId;
+        return users.find((user) => user.id === userId);
+      })
+      .filter((user): user is UserRepresentation => user !== undefined);
+
+    setCheckedUsers(new Set(newCheckedUsers));
+  }, [pendingRequests, users, currentUser.id]);
+
+  useEffect(() => {
+    refresh();
+  }, [currentUser.id]);
 
   useEffect(() => {
     const fetchRelations = async () => {
       try {
         // Get existing relations
-        const relations = await relationshipService.getRelations(currentUser.id!);
-        const connectedUsers = users.filter(user =>
-            relations.some(relation =>
-                (relation.userId === user.id || relation.relatedUserId === user.id) &&
-                relation.relationshipStatus === "ACCEPTED"
-            )
+        const relations = await relationshipService.getRelations(
+          currentUser.id!,
+        );
+        const connectedUsers = users.filter((user) =>
+          relations.some(
+            (relation) =>
+              (relation.userId === user.id ||
+                relation.relatedUserId === user.id) &&
+              relation.relationshipStatus === "ACCEPTED",
+          ),
         );
 
-        // Get pending requests
-        const requests = await friendsRequestsService.getFriendsRequests(currentUser.id!);
-        setPendingRequests(requests!);
-        // Get users from pending requests
-        const usersFromRequests = users.filter(user =>
-            requests!.some(request =>
-                request.userId === user.id || request.relatedUserId === user.id
-            )
+        // Get ALL pending requests (both sent and received)
+        const requests = await friendsRequestsService.getFriendsRequests(
+          currentUser.id!,
         );
 
-        // Combine both sets of users
-        const allSelectedUsers = [...connectedUsers, ...usersFromRequests];
+        // Update sentRequests state with requests sent by current user
+        const sentRequestIds = requests!
+          .filter((request) => request.userId === currentUser.id)
+          .map((request) => request.relatedUserId);
+        setSentRequests(new Set(sentRequestIds));
 
-        // Update state
-        setSelectedUsers(allSelectedUsers);
-        setPendingRequests(requests!);
+        // Only show received requests in the notification badge
+        const receivedRequests = requests!.filter(
+          (request) => request.relatedUserId === currentUser.id,
+        );
+        setPendingRequests(receivedRequests);
 
+        setSelectedUsers(connectedUsers);
       } catch (error) {
-        console.error("Error fetching relations:", error);
+        console.error("Error fetching data:", error);
       }
-
     };
-    fetchRelations().catch((error) => {
-      console.error("Error in fetchRelations effect:", error);
-    });
+
+    fetchRelations();
   }, [currentUser.id, users]);
 
+  useEffect(() => {
+    console.log("Pending requests:", pendingRequests);
+    console.log("Selected users:", selectedUsers);
+    console.log("Available users:", users);
+  }, [pendingRequests, selectedUsers, users]);
+
   const hasPendingRequest = (userId: string) => {
-    console.log('Checking for pending request for userId:', userId);
-    return pendingRequests!.some(
-      (request: FriendsRequestsRepresentation) =>
-        request.userId === userId || request.relatedUserId === userId,
+    return pendingRequests.some(
+      (request) =>
+        (request.userId === currentUser.id &&
+          request.relatedUserId === userId) ||
+        (request.userId === userId && request.relatedUserId === currentUser.id),
     );
   };
 
   const isUserDisabled = (userId: string) => {
-    const isSelected = selectedUsers?.some(u => u.id === userId);
-    const hasPending = pendingRequests?.some(
-        req => req.userId === userId || req.relatedUserId === userId
+    // User is current user
+    if (userId === currentUser.id) return true;
+
+    // Check existing relationships
+    const hasRelation = selectedUsers.some(
+      (u: UserRepresentation) => u.id === userId,
     );
-    console.log(`User ${userId} - Selected: ${isSelected}, Pending: ${hasPending}`);
-    return isSelected || hasPending;
+
+    // Check pending requests in both directions
+    const hasPending = pendingRequests.some(
+      (req) =>
+        (req.userId === currentUser.id && req.relatedUserId === userId) ||
+        (req.userId === userId && req.relatedUserId === currentUser.id) ||
+        (req.userId === currentUser.id && req.relatedUserId === userId),
+    );
+
+    return hasRelation || hasPending;
   };
 
-  const refresh = () => {
-    friendsRequestsService
-      .getFriendsRequests(currentUser.id!)
-      .then((requests) => {
-        setPendingRequests(requests!);
-      })
-      .catch((error) => {
-        addError("refresh", error);
-      });
+  const refresh = async () => {
+    try {
+      const [relations, requests] = await Promise.all([
+        relationshipService.getRelations(currentUser.id!),
+        friendsRequestsService.getFriendsRequests(currentUser.id!),
+      ]);
+
+      // Filter out users who are already connected
+      const connectedUsers = users.filter((user) =>
+        relations.some(
+          (relation) =>
+            (relation.userId === user.id ||
+              relation.relatedUserId === user.id) &&
+            relation.relationshipStatus === "ACCEPTED",
+        ),
+      );
+
+      setSelectedUsers(connectedUsers);
+      // Only show received requests in the notification badge
+      const receivedRequests = requests!.filter(
+        (request) => request.relatedUserId === currentUser.id,
+      );
+      setPendingRequests(receivedRequests);
+    } catch (error) {
+      addError("refresh", error);
+    }
   };
 
-  const handleAcceptRequest = (userId: string, relatedUserId: string) => {
-    friendsRequestsService
-      .acceptFriendRequest(userId, relatedUserId)
-      .then(() => {
-        relationshipService.updateRelationship(userId, relatedUserId, "ACCEPTED", "FRIENDS").then(() => {
-          addAlert(t("friendRequestAccepted"), AlertVariant.success);
-          refresh();
-        })
-            .catch((error) => {
-              addError(error.messageKey, error.message);
-            });
-      })
+  const handleAcceptRequest = async (userId: string, relatedUserId: string) => {
+    try {
+      await friendsRequestsService.acceptFriendRequest(userId, relatedUserId);
+      // await relationshipService.updateRelationship(userId, relatedUserId, "ACCEPTED", "FRIENDS");
+      await refresh(); // Refresh both lists
+      addAlert(t("friendRequestAccepted"), AlertVariant.success);
+      document.dispatchEvent(new CustomEvent("relationsUpdated"));
+    } catch (error) {
+      addError("acceptRequest", error);
+    }
   };
 
   const handleDeclineRequest = (userId: string, relatedUserId: string) => {
@@ -137,40 +200,50 @@ export const FriendsRequestsTab = ({
     try {
       await friendsRequestsService.sendFriendRequest({
         userId: userId,
-        relatedUserId: targetUserId
+        relatedUserId: targetUserId,
       });
-      setSentRequests(prev => new Set([...prev, targetUserId]));
+
+      // Update both states
+      setSentRequests((prev: any) => new Set([...prev, targetUserId]));
+      setPendingRequests((prev: any) => [
+        ...prev,
+        {
+          userId: userId,
+          relatedUserId: targetUserId,
+        },
+      ]);
+
       addAlert(t("friendRequestSent"), AlertVariant.success);
-      refresh();
     } catch (error: any) {
       addError(error.messageKey, error.message);
     }
   };
 
-
-
   return (
     <>
-      <PageSection variant="light">
-        <Popover
-          bodyContent={
-            selectedUsers && selectedUsers.length > 0 ? (
+      {pendingRequests && pendingRequests.length > 0 && (
+        <PageSection variant="light">
+          <Popover
+            bodyContent={
               <DataList aria-label="Friend requests">
-                {selectedUsers!.map((request: any) => (
-                  <DataListItem key={request.id}>
+                {pendingRequests.map((request) => (
+                  <DataListItem key={request.userId}>
                     <DataListItemRow>
                       <DataListItemCells
                         dataListCells={[
                           <DataListCell key="name">
-                            {request.username}
+                            {
+                              users.find((u) => u.id === request.userId)
+                                ?.username
+                            }
                           </DataListCell>,
                           <DataListCell key="actions">
                             <Button
                               variant="primary"
                               onClick={() =>
                                 handleAcceptRequest(
-                                  currentUser.id!,
-                                  request.id!,
+                                  request.userId,
+                                  request.relatedUserId,
                                 )
                               }
                             >
@@ -180,8 +253,8 @@ export const FriendsRequestsTab = ({
                               variant="danger"
                               onClick={() =>
                                 handleDeclineRequest(
-                                  currentUser.id!,
-                                  request.id!,
+                                  request.userId,
+                                  request.relatedUserId,
                                 )
                               }
                             >
@@ -194,47 +267,53 @@ export const FriendsRequestsTab = ({
                   </DataListItem>
                 ))}
               </DataList>
-            ) : null
-          }
-          triggerAction="hover"
-        >
-          <div style={{ display: "inline-block", position: "relative" }}>
-            <Alert
-              variant="info"
-              isInline
-              title={t("newFriendRequests")}
-              className="notification-alert"
-              style={{ width: "auto" }}
-            >
-              <Badge
-                style={{ position: "absolute", top: "-10px", right: "-10px" }}
+            }
+            triggerAction={"hover"}
+          >
+            <div style={{ display: "inline-block", position: "relative" }}>
+              <Alert
+                variant="info"
+                isInline
+                title={t("newFriendRequests 🚀")}
+                className="notification-alert"
+                style={{ width: "auto", backgroundColor: "yellow" }}
               >
-                {pendingRequests!.length}
-              </Badge>
-            </Alert>
-          </div>
-        </Popover>
-      </PageSection>
-
+                <Badge
+                  style={{ position: "absolute", top: "-10px", right: "-10px" }}
+                >
+                  {pendingRequests!.length}
+                </Badge>
+              </Alert>
+            </div>
+          </Popover>
+        </PageSection>
+      )}
       <PageSection>
         <DataList aria-label="Available users">
           {users.map((user) => (
             <DataListItem key={`select-${user.id}`}>
               <DataListItemRow>
                 <DataListCheck
-                    aria-labelledby={`select-${user.id}`}
-                    name={`select-${user.id}`}
-                    isChecked={selectedUsers?.includes(user)}
-                    isDisabled={isUserDisabled(user.id!)}
+                  aria-labelledby={`select-${user.id}`}
+                  name={`select-${user.id}`}
+                  isChecked={
+                    isUserDisabled(user.id!) ||
+                    checkedUsers.has(user) ||
+                    sentRequests.has(user.id!) ||
+                    hasPendingRequest(user.id!)
+                  }
+                  isDisabled={true}
                 />
                 <DataListCell>{user.username}</DataListCell>
                 <DataListCell>
                   <Button
-                      variant="secondary"
-                      isDisabled={hasPendingRequest(user.id!) ||
-                          selectedUsers?.some((u) => u.id === user.id) ||
-                          sentRequests.has(user.id!)}
-                      onClick={() => handleSendRequest(currentUser.id!, user.id!)}
+                    variant="secondary"
+                    isDisabled={
+                      hasPendingRequest(user.id!) ||
+                      selectedUsers?.some((u) => u.id === user.id) ||
+                      sentRequests.has(user.id!)
+                    }
+                    onClick={() => handleSendRequest(currentUser.id!, user.id!)}
                   >
                     {t("Send Request")}
                   </Button>

@@ -23,14 +23,7 @@
         <keycloak.base.test.resource>${project.parent.basedir}/../../tests/base/src/test/resources</keycloak.base.test.resource>
         <auth.server.fips.mode>disabled</auth.server.fips.mode>
     </properties>
-    
-    <dependencies>
-        <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-quarkus-dist</artifactId>
-            <type>zip</type>
-        </dependency>
-    </dependencies>
+
 
     <build>
         <plugins>
@@ -218,7 +211,7 @@
                     </execution>
                     <execution>
                         <id>copy-testsuite-providers</id>
-                        <phase>generate-resources</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>copy</goal>
                         </goals>

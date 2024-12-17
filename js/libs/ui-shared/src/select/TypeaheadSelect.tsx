@@ -1,7 +1,7 @@
 import {
   Button,
-  Chip,
   ChipGroup,
+  Chip,
   MenuFooter,
   MenuToggle,
   MenuToggleStatus,

@@ -16,8 +16,8 @@ import java.util.UUID;
 public class FriendsRequestsEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.UUID)  // Change to UUID
+    @Column(name = "ID", columnDefinition = "UUID")
     private UUID id;
 
     @Column(name = "USER_ID")

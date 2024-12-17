@@ -1,5 +1,6 @@
 package space.heartfullmind.relations.rest;
 
+import jakarta.transaction.Transactional;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -38,7 +39,9 @@ public class RelationshipResource {
     @Path("/relations/{userId}")
     public List<RelationshipDTO> getRelations(@PathParam("userId") String userId) {
     try {
-            return relationshipService.getRelationships(userId);
+        List<RelationshipDTO> relationships;
+        relationships = relationshipService.getRelationships(userId);
+        return relationships;
         }catch (Exception e) {
             return List.of();
         }
@@ -46,6 +49,7 @@ public class RelationshipResource {
 
     @POST
     @Path("/relationship")
+    @Transactional
     public Response createRelationship(RelationshipDTO relationship) {
         try {
             relationshipService.createRelationship(
@@ -65,8 +69,6 @@ public class RelationshipResource {
                     .build();
         }
     }
-
-
 
     @DELETE
     @Path("/delete/{userId}/{relatedUserId}")
