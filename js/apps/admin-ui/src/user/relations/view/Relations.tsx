@@ -82,6 +82,7 @@ const RelationshipTab = ({
         setSelectedUsers((prev) => prev!.filter((u) => u.id !== userId));
       });
     }
+    document.dispatchEvent(new CustomEvent("relationsUpdated"));
   };
 
   return (

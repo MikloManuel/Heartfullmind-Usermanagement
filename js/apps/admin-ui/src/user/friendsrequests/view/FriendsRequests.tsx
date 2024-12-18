@@ -46,7 +46,24 @@ export const FriendsRequestsTab = ({
   );
 
   useEffect(() => {
-    console.log("Component rendered with new styles!");
+    const handleFriendsRequestsUpdate = () => {
+      // Refresh relations data
+      refresh();
+    };
+
+    // Add event listener
+    document.addEventListener(
+      "friendsRequestsUpdated",
+      handleFriendsRequestsUpdate,
+    );
+
+    // Cleanup
+    return () => {
+      document.removeEventListener(
+        "friendsRequestsUpdated",
+        handleFriendsRequestsUpdate,
+      );
+    };
   }, []);
 
   useEffect(() => {
@@ -178,7 +195,7 @@ export const FriendsRequestsTab = ({
       // await relationshipService.updateRelationship(userId, relatedUserId, "ACCEPTED", "FRIENDS");
       await refresh(); // Refresh both lists
       addAlert(t("friendRequestAccepted"), AlertVariant.success);
-      document.dispatchEvent(new CustomEvent("relationsUpdated"));
+      document.dispatchEvent(new CustomEvent("friendsRequestsUpdated"));
     } catch (error) {
       addError("acceptRequest", error);
     }
@@ -205,13 +222,6 @@ export const FriendsRequestsTab = ({
 
       // Update both states
       setSentRequests((prev: any) => new Set([...prev, targetUserId]));
-      setPendingRequests((prev: any) => [
-        ...prev,
-        {
-          userId: userId,
-          relatedUserId: targetUserId,
-        },
-      ]);
 
       addAlert(t("friendRequestSent"), AlertVariant.success);
     } catch (error: any) {

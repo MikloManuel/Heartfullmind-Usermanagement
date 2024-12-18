@@ -1,6 +1,7 @@
 package space.heartfullmind.relations.jpa.service;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import org.keycloak.connections.jpa.JpaConnectionProvider;
 import org.keycloak.models.KeycloakSession;
 import org.keycloak.models.KeycloakTransaction;
@@ -53,8 +54,20 @@ public class RelationshipService {
 
     public void deleteRelationship(String userId, String relatedUserId) {
         this.em = session.getProvider(JpaConnectionProvider.class).getEntityManager();
-        RelationshipEntity entity = findRelationship(userId, relatedUserId);
-        this.em.remove(entity);
+
+        try {
+            RelationshipEntity entity = findRelationship(userId, relatedUserId);
+            this.em.remove(entity);
+        } catch (NoResultException e) {
+            // Entity not found - continue
+        }
+
+        try {
+            RelationshipEntity reverseEntity = findRelationship(relatedUserId, userId);
+            this.em.remove(reverseEntity);
+        } catch (NoResultException e) {
+            // Reverse entity not found - continue
+        }
     }
 
     public List<RelationshipDTO> getRelationships(String userId) {
