@@ -96,7 +96,7 @@
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.1",
     "react-i18next": "^15.1.0",
-    "react-router-dom": "^6.27.0",
+    "react-router-dom": "^7.0.2",
     "reactflow": "^11.11.4",
     "url-join": "^5.0.0",
     "url-template": "^3.1.1",
