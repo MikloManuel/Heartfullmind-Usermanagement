@@ -121,6 +121,6 @@
     "ldap-server-mock": "^6.0.1",
     "lightningcss": "^1.27.0",
     "ts-node": "^10.9.2",
-    "uuid": "^11.0.2"
+    "uuid": "^11.0.4"
   }
 }
