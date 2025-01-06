@@ -5,6 +5,7 @@ import { checker } from "vite-plugin-checker";
 import dts from "vite-plugin-dts";
 
 // https://vitejs.dev/config/
+// @ts-ignore
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   const external = ["react", "react/jsx-runtime", "react-dom"];

@@ -29,6 +29,9 @@ const options = {
   "admin-dev": {
     type: "boolean",
   },
+  "start-basic-dev": {
+    type: "boolean",
+  },
 };
 
 await startServer();

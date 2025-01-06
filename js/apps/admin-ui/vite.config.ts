@@ -52,28 +52,27 @@ export default defineConfig(({ mode }) => {
             proxy.on("proxyRes", (proxyRes) => {
               proxyRes.headers["content-security-policy"] = `
                 default-src 'self';
-                script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:5173 http://localhost:9080;
-                style-src 'self' 'unsafe-inline';
-                frame-src 'self' http://localhost:9080 http://localhost:5173;
-                frame-ancestors 'self' http://localhost:9080 http://localhost:5173;
+                script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:5173 http://localhost:9080 http://localhost:9000 http://localhost:4040;
+                style-src 'self' 'unsafe-inline' 'unsafe-eval';
+                frame-src 'self' http://localhost:9080 http://localhost:5173 http://localhost:9000 http://localhost:4040;
+                frame-ancestors 'self' http://localhost:9080 http://localhost:5173 http://localhost:9000 http://localhost:4040;
                 img-src 'self' data:;
-                connect-src 'self' http://localhost:9080 ws://localhost:5173;
+                connect-src 'self' http://localhost:9080 ws://localhost:5173 http://localhost:9000 http://localhost:4040;
                 form-action 'self';
                 base-uri 'self'
               `.replace(/\s+/g, " ");
               proxyRes.headers["x-frame-options"] = "SAMEORIGIN";
-              proxyRes.headers["access-control-allow-origin"] =
-                "http://localhost:5173, http://localhost:9080";
               proxyRes.headers["access-control-allow-credentials"] = "true";
               proxyRes.headers["access-control-allow-methods"] =
                 "GET, POST, OPTIONS";
               proxyRes.headers["access-control-allow-headers"] = "*";
+              /*
               if (proxyRes.headers.location) {
                 proxyRes.headers.location = proxyRes.headers.location.replace(
                   "9080",
                   "5173",
                 );
-              }
+              }*/
             });
           },
         },
