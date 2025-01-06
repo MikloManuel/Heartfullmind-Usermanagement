@@ -86,7 +86,7 @@ public class AccountLoader {
         AccountResourceProvider accountResourceProvider = getAccountResourceProvider(theme);
         
         if (request.getHttpMethod().equals(HttpMethod.OPTIONS)) {
-            return new CorsPreflightService();
+            return new CorsPreflightService(session);
         } else if ((accepts.contains(MediaType.APPLICATION_JSON_TYPE) || MediaType.APPLICATION_JSON_TYPE.equals(content)) && !uriInfo.getPath().endsWith("keycloak.json")) {
             return getAccountRestService(client, null);
         } else if (accountResourceProvider != null) {
@@ -100,7 +100,7 @@ public class AccountLoader {
     @Produces(MediaType.APPLICATION_JSON)
     public Object getVersionedAccountRestService(final @PathParam("version") String version) {
         if (request.getHttpMethod().equals(HttpMethod.OPTIONS)) {
-            return new CorsPreflightService();
+            return new CorsPreflightService(session);
         }
         return getAccountRestService(getAccountManagementClient(session.getContext().getRealm()), version);
     }

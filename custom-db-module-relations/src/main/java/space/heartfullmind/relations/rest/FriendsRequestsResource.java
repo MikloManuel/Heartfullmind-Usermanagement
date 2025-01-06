@@ -19,7 +19,6 @@ import space.heartfullmind.relations.jpa.enums.RelationshipStatus;
 import space.heartfullmind.relations.jpa.enums.RelationshipType;
 import org.jboss.logging.Logger;
 import space.heartfullmind.relations.jpa.entity.FriendsRequestsEntity;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +26,7 @@ import java.util.stream.Collectors;
 @Path("/admin/api/friends-requests")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+
 public class FriendsRequestsResource {
     private static final Logger log = Logger.getLogger(FriendsRequestsResource.class);
     @Context
@@ -41,7 +41,7 @@ public class FriendsRequestsResource {
     }
 
     @POST
-    @Path("/request")
+    @Path("/friendrequest")
     @Transactional
     public Response sendRequest(FriendsRequestsDTO request) {
         try {
