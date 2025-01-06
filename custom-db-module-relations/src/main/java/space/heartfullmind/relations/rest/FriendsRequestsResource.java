@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 @Path("/admin/api/friends-requests")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-
 public class FriendsRequestsResource {
     private static final Logger log = Logger.getLogger(FriendsRequestsResource.class);
     @Context
@@ -41,9 +40,9 @@ public class FriendsRequestsResource {
     }
 
     @POST
-    @Path("/friendrequest")
+    @Path("/request")
     @Transactional
-    public Response sendRequest(FriendsRequestsDTO request) {
+    public Response sendFriendRequest(FriendsRequestsDTO request) {
         try {
             // relationshipService.createRelationship(request.getUserId(), request.getRelatedUserId(), RelationshipType.NONE, RelationshipStatus.PENDING);
             friendsRequestsService.createRequest(request.getUserId(), request.getRelatedUserId());
