@@ -37,9 +37,9 @@
     <properties>
         <!-- Maven -->
         <maven.version>3.9.8</maven.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
 
         <project.version.npm>999.0.0-SNAPSHOT</project.version.npm>
 
@@ -245,10 +245,10 @@
         <js.skip.clean>false</js.skip.clean>
 
         <!-- Set to true on release to update proto.lock files -->
-        <commitProtoLockChanges>false</commitProtoLockChanges>
-        <skipProtoLock>false</skipProtoLock>
+        <commitProtoLockChanges>true</commitProtoLockChanges>
+        <skipProtoLock>true</skipProtoLock>
 
-        <maven.build.cache.enabled>false</maven.build.cache.enabled>
+        <maven.build.cache.enabled>true</maven.build.cache.enabled>
     </properties>
 
     <url>http://keycloak.org</url>
@@ -308,7 +308,7 @@
         <module>quarkus</module>
         <module>custom-db-module-relations</module>
     </modules>
-
+<!--
     <distributionManagement>
         <repository>
             <id>local-repository</id>
@@ -319,7 +319,7 @@
             <url>https://localhost/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
+-->
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -1297,7 +1297,6 @@
                 <type>test-jar</type>
                 <version>${infinispan.version}</version>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -1436,13 +1435,11 @@
                     <artifactId>wildfly-galleon-maven-plugin</artifactId>
                     <version>${org.wildfly.galleon-plugins.version}</version>
                     <dependencies>
-                        <!-- feature-spec-gen uses wildfly-embedded to generate the feature specs, hence the designated wildfly-embedded version must match the pack one -->
                         <dependency>
                             <groupId>org.wildfly.core</groupId>
                             <artifactId>wildfly-embedded</artifactId>
                             <version>${wildfly.core.version}</version>
                         </dependency>
-                        <!-- If you add a dependency on wildfly-embedded you need to bring your own transitives -->
                         <dependency>
                             <groupId>org.wildfly.common</groupId>
                             <artifactId>wildfly-common</artifactId>
@@ -1472,7 +1469,6 @@
                     <artifactId>maven-clean-plugin</artifactId>
                     <configuration>
                         <followSymLinks>false</followSymLinks>
-                        <!-- Skip this step if on windows -->
                         <skip>${js.skip.clean}</skip>
                         <filesets>
                             <fileset>
@@ -1482,7 +1478,6 @@
                                     <include>**/node_modules/**</include>
                                 </includes>
                             </fileset>
-                            <!-- include all non-maven projects here as well -->
                             <fileset>
                                 <directory>js/apps/keycloak-server</directory>
                                 <includes>
