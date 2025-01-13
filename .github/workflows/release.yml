@@ -15,7 +15,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       - name: Build
-        run: mvn clean install -DskipTests
+        run: mvn clean install -pl :integration-arquillian-testsuite-providers,:integration-arquillian-testsuite-providers-deployment,org.keycloak:keycloak-custom-db -am -DskipTests
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
