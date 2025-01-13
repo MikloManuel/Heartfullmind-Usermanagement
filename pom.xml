@@ -249,6 +249,8 @@
         <skipProtoLock>true</skipProtoLock>
 
         <maven.build.cache.enabled>true</maven.build.cache.enabled>
+        <jib-maven-plugin.architecture>amd64</jib-maven-plugin.architecture>
+        <jib-maven-plugin.image>eclipse-temurin:17-jre-focal</jib-maven-plugin.image>
     </properties>
 
     <url>http://keycloak.org</url>
@@ -320,6 +322,14 @@
         </snapshotRepository>
     </distributionManagement>
 -->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>google-maven-central</id>
+            <name>Google Maven Central</name>
+            <url>https://maven.google.com</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -1560,6 +1570,7 @@
             </plugins>
         </pluginManagement>
     </build>
+
 
     <profiles>
         <profile>

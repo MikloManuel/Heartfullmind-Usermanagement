@@ -67,6 +67,10 @@
                 <artifactId>micrometer-registry-prometheus-simpleclient</artifactId>
                 <version>1.13.5</version>
             </dependency>
+            <dependency>
+                <groupId>io.quarkus</groupId>
+                <artifactId>quarkus-container-image</artifactId>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <!-- Remove until here  -->
