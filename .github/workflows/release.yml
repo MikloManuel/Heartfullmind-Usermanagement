@@ -22,6 +22,7 @@ jobs:
       - name: Build
         run: |
           mvn install -pl :integration-arquillian-testsuite-providers,:integration-arquillian-testsuite-providers-deployment,org.keycloak:keycloak-custom-db -am -DskipTests -Dexec.skip=true && 
+          mvn install -f quarkus/pom.xml -DskipTests &&
           cd quarkus/dist && 
           mvn clean install -DskipTests
       - name: List files
