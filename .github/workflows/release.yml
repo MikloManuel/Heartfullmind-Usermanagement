@@ -21,6 +21,8 @@ jobs:
           distribution: 'temurin'
       - name: Build
         run: mvn install -pl :integration-arquillian-testsuite-providers,:integration-arquillian-testsuite-providers-deployment,org.keycloak:keycloak-custom-db -am -DskipTests -Dexec.skip=true
+      - name: List files
+        run: ls -la quarkus/dist/target/
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
