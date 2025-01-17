@@ -21,6 +21,7 @@ jobs:
           distribution: 'temurin'
       - name: Build
         run: |
+          mvn install -pl :keycloak-crypto-fips1402,:keycloak-rest-admin-ui-ext -am -DskipTests &&
           mvn install -pl :integration-arquillian-testsuite-providers,:integration-arquillian-testsuite-providers-deployment,org.keycloak:keycloak-custom-db -am -DskipTests -Dexec.skip=true && 
           mvn install -f quarkus/pom.xml -DskipTests &&
           cd quarkus/dist && 
