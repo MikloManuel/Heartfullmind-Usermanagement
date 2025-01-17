@@ -32,3 +32,4 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: quarkus/dist/target/keycloak-*.zip
+          draft: true
