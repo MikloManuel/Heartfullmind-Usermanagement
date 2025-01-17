@@ -31,5 +31,6 @@ jobs:
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: quarkus/dist/target/keycloak-*.zip
-          draft: true
+          files: |
+            quarkus/dist/target/keycloak-*.zip
+            custom-db-module-relations/target/*.jar
