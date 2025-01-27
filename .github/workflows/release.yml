@@ -33,4 +33,5 @@ jobs:
         with:
           files: |
             quarkus/dist/target/keycloak-*.zip
+            quarkus/dist/target/keycloak-*.tar.gz
             custom-db-module-relations/target/*.jar
