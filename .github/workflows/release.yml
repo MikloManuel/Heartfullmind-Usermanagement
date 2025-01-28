@@ -29,7 +29,7 @@ jobs:
       - name: List files
         run: ls -la quarkus/dist/target/
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: |
             quarkus/dist/target/keycloak-*.zip
