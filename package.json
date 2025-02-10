@@ -35,7 +35,7 @@
     "vite-plugin-checker": "^0.8.0",
     "vite-plugin-dts": "^4.3.0",
     "vitest": "^2.1.4",
-    "wireit": "^0.14.9"
+    "wireit": "^0.14.11"
   },
   "pnpm": {
     "ignoredOptionalDependencies": [
