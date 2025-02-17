@@ -52,7 +52,7 @@
     "@types/node": "^22.10.0",
     "@types/url-join": "^4.0.3",
     "@types/url-template": "^2.0.31",
-    "chai": "^5.1.2",
+    "chai": "^5.2.0",
     "lodash-es": "^4.17.21",
     "mocha": "^10.8.2",
     "ts-node": "^10.9.2"
